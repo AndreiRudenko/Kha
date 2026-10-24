@@ -33,9 +33,19 @@ vbyte *hl_kinc_vertexbuffer_lock(vbyte *buffer) {
 	return (vbyte *)kinc_g4_vertex_buffer_lock_all(buf);
 }
 
+vbyte *hl_kinc_vertexbuffer_lock_from_to(vbyte *buffer, int start, int count) {
+	kinc_g4_vertex_buffer_t *buf = (kinc_g4_vertex_buffer_t *)buffer;
+	return (vbyte *)kinc_g4_vertex_buffer_lock(buf, start, count);
+}
+
 void hl_kinc_vertexbuffer_unlock(vbyte *buffer, int count) {
 	kinc_g4_vertex_buffer_t *buf = (kinc_g4_vertex_buffer_t *)buffer;
 	kinc_g4_vertex_buffer_unlock_all(buf);
+}
+
+void hl_kinc_vertexbuffer_unlock_count(vbyte *buffer, int count) {
+	kinc_g4_vertex_buffer_t *buf = (kinc_g4_vertex_buffer_t *)buffer;
+	kinc_g4_vertex_buffer_unlock(buf, count);
 }
 
 int hl_kinc_vertexbuffer_count(vbyte *buffer) {

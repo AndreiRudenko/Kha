@@ -24,15 +24,27 @@ class VertexBuffer {
 	}
 
 	public function lock(?start: Int, ?count: Int): Float32Array {
-		return cast new ByteArray(kinc_vertexbuffer_lock(_buffer), 0, this.count() * stride());
+		if (start == null) {
+			return cast new ByteArray(kinc_vertexbuffer_lock(_buffer), 0, this.count() * stride());
+		}
+		final lockCount = count == null ? this.count() - start : count;
+		return cast new ByteArray(kinc_vertexbuffer_lock_from_to(_buffer, start, lockCount), 0, lockCount * stride());
 	}
 
 	public function lockInt16(?start: Int, ?count: Int): Int16Array {
-		return cast new ByteArray(kinc_vertexbuffer_lock(_buffer), 0, this.count() * stride());
+		if (start == null) {
+			return cast new ByteArray(kinc_vertexbuffer_lock(_buffer), 0, this.count() * stride());
+		}
+		final lockCount = count == null ? this.count() - start : count;
+		return cast new ByteArray(kinc_vertexbuffer_lock_from_to(_buffer, start, lockCount), 0, lockCount * stride());
 	}
 
 	public function unlock(?count: Int): Void {
-		kinc_vertexbuffer_unlock(_buffer, count == null ? this.count() : count);
+		if (count == null) {
+			kinc_vertexbuffer_unlock(_buffer, this.count());
+			return;
+		}
+		kinc_vertexbuffer_unlock_count(_buffer, count);
 	}
 
 	public function stride(): Int {
@@ -103,7 +115,13 @@ class VertexBuffer {
 		return null;
 	}
 
+	@:hlNative("std", "kinc_vertexbuffer_lock_from_to") static function kinc_vertexbuffer_lock_from_to(buffer: Pointer, start: Int, count: Int): Pointer {
+		return null;
+	}
+
 	@:hlNative("std", "kinc_vertexbuffer_unlock") static function kinc_vertexbuffer_unlock(buffer: Pointer, count: Int): Void {}
+
+	@:hlNative("std", "kinc_vertexbuffer_unlock_count") static function kinc_vertexbuffer_unlock_count(buffer: Pointer, count: Int): Void {}
 
 	@:hlNative("std", "kinc_vertexbuffer_stride") static function kinc_vertexbuffer_stride(buffer: Pointer): Int {
 		return 0;
